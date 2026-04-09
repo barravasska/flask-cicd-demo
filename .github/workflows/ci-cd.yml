@@ -66,5 +66,20 @@ jobs:
           ${{ secrets.DOCKER_USERNAME }}/flask-cicd-demo:latest
           ${{ secrets.DOCKER_USERNAME }}/flask-cicd-demo:${{ github.ref_name }}
 
+  notify:
+    name: Kirim Notifikasi Discord
+    runs-on: ubuntu-latest
+    needs: [test, build-and-push]
+    if: always() # Pastikan notifikasi selalu terkirim walau job sebelumnya gagal atau di-skip
+    
+    steps:
+    - name: Kirim Status Pipeline ke Discord
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        title: "Status CI/CD Pipeline Anda"
+        description: "Test: ${{ needs.test.result }} | Build & Push: ${{ needs.build-and-push.result }}"
+        nodetail: false
+
 
  
