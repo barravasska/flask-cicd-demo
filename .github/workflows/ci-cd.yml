@@ -28,6 +28,14 @@ jobs:
     - name: Jalankan unit test
       run: |
         pytest test_app.py -v
+        
+    - name: Cek Keamanan Server dan Library dengan Trivy
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'table'
+        exit-code: '0'   # Gunakan 1 jika ingin pipeline berhenti (gagal) saat ditemukan celah keamanan
 
   build-and-push:
     name: Build & Push ke Docker Hub
@@ -53,3 +61,5 @@ jobs:
         context: .
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/flask-cicd-demo:latest
+
+
